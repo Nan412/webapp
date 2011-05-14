@@ -1,10 +1,13 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
-#include "../include/lua.h"
-#include "../include/luaconf.h"
-#include "../include/lauxlib.h"
-#include "../include/lualib.h"
+#include <string.h>
+
+#include "../../include/luajit-2.0/lua.h"
+#include "../../include/luajit-2.0/luaconf.h"
+#include "../../include/luajit-2.0/lauxlib.h"
+#include "../../include/luajit-2.0/lualib.h"
+
+#include "../../vendor/libuv/uv.h"
 
 char* ReadFile(char* path) {
   FILE* file;
@@ -13,7 +16,7 @@ char* ReadFile(char* path) {
 
   file = fopen(path, "rb");
   if(!file) {
-    fprintf(stderr, "Unable to open file %s", path);
+    fprintf(stderr, "Unable to open file %s\n", path);
     return "";
   }
 
@@ -23,7 +26,7 @@ char* ReadFile(char* path) {
 
   buffer = (char*)malloc(fileLen+1);
   if(!file) {
-    fprintf(stderr, "Out of memory");
+    fprintf(stderr, "Out of memory or something\n");
     fclose(file);
 
     return "";
@@ -47,7 +50,7 @@ int main (int argc, char** argv) {
     buff = ReadFile(argv[1]);
   }
   else {
-    fprintf(stderr, "No file provided");
+    fprintf(stderr, "No file provided\n");
     return 0;
   }
 
