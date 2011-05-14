@@ -1,0 +1,6 @@
+[submodule "vendor/libuv"]
+	path = vendor/libuv
+	url = https://github.com/joyent/libuv.git
+[submodule "vendor/luajit"]
+	path = vendor/luajit
+	url = http://luajit.org/git/luajit-2.0.git
