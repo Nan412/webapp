@@ -1,10 +1,18 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "../include/lua.h"
-#include "../include/luaconf.h"
-#include "../include/lauxlib.h"
-#include "../include/lualib.h"
+
+#if defined(JIT)
+  #include "../include/luajit-2.0/lua.h"
+  #include "../include/luajit-2.0/luaconf.h"
+  #include "../include/luajit-2.0/lauxlib.h"
+  #include "../include/luajit-2.0/lualib.h"
+#elif defined(NATIVE)
+  #include "../include/lua.h"
+  #include "../include/luaconf.h"
+  #include "../include/lauxlib.h"
+  #include "../include/lualib.h"
+#endif
 
 char* ReadFile(char* path) {
   FILE* file;
@@ -13,7 +21,7 @@ char* ReadFile(char* path) {
 
   file = fopen(path, "rb");
   if(!file) {
-    fprintf(stderr, "Unable to open file %s", path);
+    fprintf(stderr, "Unable to open file %s\n", path);
     return "";
   }
 
@@ -23,7 +31,7 @@ char* ReadFile(char* path) {
 
   buffer = (char*)malloc(fileLen+1);
   if(!file) {
-    fprintf(stderr, "Out of memory");
+    fprintf(stderr, "Out of memory or something\n");
     fclose(file);
 
     return "";
@@ -42,12 +50,15 @@ int main (int argc, char** argv) {
   // Open lua libraries
   luaL_openlibs(L);
 
+  // Open file buffer
   const char* buff;
   if(argc > 1) {
     buff = ReadFile(argv[1]);
   }
   else {
-    fprintf(stderr, "No file provided");
+    // Maybe default to REPL here
+    fprintf(stderr, "No file provided\n");
+    cout >> "> " >> endl;
     return 0;
   }
 
@@ -60,6 +71,12 @@ int main (int argc, char** argv) {
   }
   else {
     error = lua_pcall(L, 0, 0, 0);
+    if (error) {
+      fprintf(stderr, "%s", lua_tostring(L, -1));
+
+      // Pop error from the stack
+      lua_pop(L, 1);
+    }
   }
 
   lua_close(L);

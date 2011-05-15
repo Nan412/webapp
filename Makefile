@@ -8,11 +8,11 @@ update: clean build
 
 build:
 	@@mkdir -p $(BASE)/build/
-	gcc -Wall -o $(BASE)/build/lude $(BASE)/src/lude.c -L$(BASE)/lib -llua -lm -ldl
+	gcc -Wall -o $(BASE)/build/lude $(BASE)/src/lude.c -L$(BASE)/lib -llua -lm -ldl -DNATIVE
 
 jit:
 	@@mkdir -p $(BASE)/build/
-	gcc -Wall -o $(BASE)/build/lude $(BASE)/src/jit/lude.c -L$(BASE)/lib -lluajit-5.1 -lev -Wl,-rpath $(BASE)/lib
+	gcc -Wall -o $(BASE)/build/lude $(BASE)/src/lude.c -L$(BASE)/lib -lluajit-5.1 -lev -Wl,-rpath $(BASE)/lib -DJIT
 
 clean:
 	@@rm -rf $(BASE)/build/
