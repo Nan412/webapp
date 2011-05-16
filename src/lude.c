@@ -58,7 +58,6 @@ int main (int argc, char** argv) {
   else {
     // Maybe default to REPL here
     fprintf(stderr, "No file provided\n");
-    cout >> "> " >> endl;
     return 0;
   }
 
