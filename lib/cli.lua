@@ -31,7 +31,7 @@ end
 
 local args = cli:parse_args()
 
-if not args or #args == 0 then
+if not args or #arg == 0 then
   return cli_error("", false, cli)
 end
 
