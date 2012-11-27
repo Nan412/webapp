@@ -1,20 +1,24 @@
-BASE = .
+# Variables.
+PREFIX=.
+BUILD_DIR=$(PREFIX)/bin
 CC=gcc
 CCFLAGS=-Wall -o
 
-all: build
+# Default command.
+all: update
 
+# Update the build.
 update: clean build
 
 build:
-	@@mkdir -p $(BASE)/build/
-	$(CC) $(CCFLAGS) $(BASE)/build/lude $(BASE)/src/lude.c -L$(BASE)/lib -llua -lm -ldl -DNATIVE
+	@@mkdir -p $(BUILD_DIR)
+	$(CC) $(CCFLAGS) $(BUILD_DIR)/webapp $(PREFIX)/src/webapp.c -llua -lm -ldl -DNATIVE
 
 jit:
-	@@mkdir -p $(BASE)/build/
-	$(CC) $(CCFLAGS) $(BASE)/build/lude $(BASE)/src/lude.c -L$(BASE)/lib -lluajit-5.1 -lev -Wl,-rpath $(BASE)/lib -DJIT
+	@@mkdir -p $(BUILD_DIR)
+	$(CC) $(CCFLAGS) $(BUILD_DIR)/webapp $(PREFIX)/src/webapp.c -L$(PREFIX)/lib -lluajit-5.1 -Wl,-rpath $(PREFIX)/lib -DJIT
 
 clean:
-	@@rm -rf $(BASE)/build/
+	@@rm -rf $(BUILD_DIR)
 
-.PHONY: build
+.PHONY: bin
