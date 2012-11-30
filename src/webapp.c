@@ -8,41 +8,55 @@
 #include "../include/luajit-2.0/lauxlib.h"
 #include "../include/luajit-2.0/lualib.h"
 
-// ~ Read files. ~
-char* readFile(char* path) {
-  FILE* file;
-  char* buffer;
-  unsigned long fileLen;
+// ~ Read Lua configuration file. ~
+int load_lua_cli(char** buffer) {
+  FILE* file = fopen("lib/cli.lua", "rb");
+  int length;
 
-  fopen_s(&file, path, "rb");
+  //fopen_s(&file, path, "rb");
 
-  if(!file) {
-    fprintf(stderr, "Unable to open file %s\n", path);
-    return "";
+  // Ensure the file exists.
+  if (file == NULL) {
+    // Unable to locate file.
+    return -1;
   }
 
+  // Read till end of file.
   fseek(file, 0, SEEK_END);
-  fileLen = ftell(file);
+
+  // Determine length.
+  length = ftell(file);
+
+  // Reset seek position.
   fseek(file, 0, SEEK_SET);
 
-  buffer = (char*)malloc(fileLen+1);
-  if(!file) {
-    fprintf(stderr, "Out of memory or something\n");
+  // Assign and allocate to the buffer.
+  *buffer = (char*)malloc(length+1);
+
+  // Determine read failure.
+  if (length != fread(*buffer, sizeof(char), length, file)) {
+    // Close the file handle.
     fclose(file);
 
-    return "";
+    // Empty filled buffer.
+    free(*buffer);
+
+    // Unable to read file.
+    return -2;
   }
 
-  fread(buffer, fileLen, 1, file);
+  // Close the file handle.
   fclose(file);
 
-  return buffer;
+  (*buffer)[length] = 0;
+
+  return 0;
 }
 
 // Kick off the tool!
 int main (int argc, char** argv) {
   // Used to store the contents of the CLI script.
-  const char* buff;
+  char* buff;
   // Used for iteration and tracking errors.
   int i, error;
 
@@ -79,7 +93,12 @@ int main (int argc, char** argv) {
   lua_pop(L, 1);
   
   // Open file buffer.
-  buff = readFile("lib/cli.lua");
+  error = load_lua_cli(&buff);
+
+  // File read error.
+  if (error < 0) {
+    fprintf(stderr, "%s", "Unable read or parse the main CLI file.");
+  }
 
   // Load the buffer.
   error = luaL_loadstring(L, buff);
