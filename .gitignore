@@ -1,2 +1,8 @@
 build/
 bin/
+Debug/
+Release/
+*.user
+*.suo
+*.sdf
+*.opensdf

@@ -2,19 +2,20 @@
 #include <string.h>
 #include <stdlib.h>
 
-#if defined(NATIVE)
-  #include "../include/lua.h"
-  #include "../include/luaconf.h"
-  #include "../include/lauxlib.h"
-  #include "../include/lualib.h"
-#endif
+// This prototype uses the luajit headers instead of standard Lua.
+#include "../include/luajit-2.0/lua.h"
+#include "../include/luajit-2.0/luaconf.h"
+#include "../include/luajit-2.0/lauxlib.h"
+#include "../include/luajit-2.0/lualib.h"
 
-char* ReadFile(char* path) {
+// ~ Read files. ~
+char* readFile(char* path) {
   FILE* file;
   char* buffer;
   unsigned long fileLen;
 
-  file = fopen(path, "rb");
+  fopen_s(&file, path, "rb");
+
   if(!file) {
     fprintf(stderr, "Unable to open file %s\n", path);
     return "";
@@ -38,16 +39,22 @@ char* ReadFile(char* path) {
   return buffer;
 }
 
-
+// Kick off the tool!
 int main (int argc, char** argv) {
-  // Open lua
+  // Used to store the contents of the CLI script.
+  const char* buff;
+  // Used for iteration and tracking errors.
+  int i, error;
+
+  // Open lua.
   lua_State* L = luaL_newstate();
 
-  // Open lua libraries
+  // Open lua libraries.
   luaL_openlibs(L);
 
   // Get the package table.
   lua_getglobal(L, "package");
+
   // This gets the `path` property from the package table.  At the top of the stack, (-1).
   lua_getfield(L, -1, "path");
 
@@ -57,8 +64,10 @@ int main (int argc, char** argv) {
   // Push the new String onto the stack.
   lua_pushstring(L, "./?.lua;./deps/luarocks/share/lua/5.1/?.lua;./deps/luarocks/share/lua/5.1/?/init.lua;./deps/luarocks/lib/lua/5.1/?.lua;./deps/luarocks/lib/lua/5.1/?/init.lua");
 
-  // set the field "path" in table at -2 with value at top of stack
+  // Set the field "path" in table at -2 with value at top of stack.
   lua_setfield(L, -2, "path");
+
+  // Remove the path.
   lua_pop(L, 1);
 
   // Add the cpath.
@@ -67,46 +76,51 @@ int main (int argc, char** argv) {
   lua_pop(L, 1);
   lua_pushstring(L, "./?.so;./deps/luarocks/lib/lua/5.1/?.so;./deps/luarocks/lib/lua/5.1/loadall.so");
   lua_setfield(L, -2, "cpath");
-
   lua_pop(L, 1);
-
-  const char* buff;
-
-  // Open file buffer
-  buff = ReadFile("lib/cli.lua");
+  
+  // Open file buffer.
+  buff = readFile("lib/cli.lua");
 
   // Load the buffer.
-  int error = luaL_loadstring(L, buff);
-  int i;
+  error = luaL_loadstring(L, buff);
 
   if (error) {
     fprintf(stderr, "%s", lua_tostring(L, -1));
 
-    // Pop error from the stack
+    // Pop error from the stack.
     lua_pop(L, 1);
 
+    // Err code.
     return 1;
   }
 
+  // Prepare arguments to be passed into Lua-land.
   lua_createtable (L, argc, 0);
   for (i = 0; i < argc; i++) {
-    lua_pushstring (L, argv[i]);
+    lua_pushstring(L, argv[i]);
     lua_rawseti(L, -2, i);
   }
+
+  // Map the table to the internal global `arg`.
   lua_setglobal(L, "arg");
 
+  // Execute Lua.
   error = lua_pcall(L, 0, 0, 0);
 
+  // Report all errors.
   if (error) {
     fprintf(stderr, "%s", lua_tostring(L, -1));
 
     // Pop error from the stack
     lua_pop(L, 1);
 
+    // Err code.
     return 1;
   }
 
+  // End the run.
   lua_close(L);
 
+  // Normal exit code.
   return 0;
 }
