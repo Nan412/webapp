@@ -3,10 +3,10 @@
 #include <stdlib.h>
 
 // This prototype uses the luajit headers instead of standard Lua.
-#include "../include/luajit-2.0/lua.h"
-#include "../include/luajit-2.0/luaconf.h"
-#include "../include/luajit-2.0/lauxlib.h"
-#include "../include/luajit-2.0/lualib.h"
+#include "../deps/lua/src/lua.h"
+#include "../deps/lua/src/luaconf.h"
+#include "../deps/lua/src/lauxlib.h"
+#include "../deps/lua/src/lualib.h"
 
 // ~ Read Lua configuration file. ~
 int load_lua_cli(char** buffer) {
