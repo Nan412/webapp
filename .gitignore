@@ -6,3 +6,6 @@ Release/
 *.suo
 *.sdf
 *.opensdf
+deps/luarocks/bin
+deps/luarocks/lib
+deps/luarocks/share
