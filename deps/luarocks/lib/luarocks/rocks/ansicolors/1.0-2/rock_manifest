@@ -1,6 +1,0 @@
-rock_manifest = {
-   ['ansicolors-1.0-2.rockspec'] = "1c41fbd1dbd2766d1df76110b5427663",
-   lua = {
-      ['ansicolors.lua'] = "fd2e7ebd067ab22412b762c65722598b"
-   }
-}
