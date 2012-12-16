@@ -6,6 +6,13 @@ Release/
 *.suo
 *.sdf
 *.opensdf
+*.o
 deps/luarocks/bin
 deps/luarocks/lib
 deps/luarocks/share
+deps/lua/include/
+deps/lua/lib/
+deps/lua/man/
+deps/lua/src/liblua.a
+deps/lua/src/lua
+deps/lua/src/luac

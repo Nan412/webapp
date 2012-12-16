@@ -7,25 +7,23 @@ PREFIX=$(CURDIR)
 DEPS=$(PREFIX)/deps
 BUILD_DIR=$(PREFIX)/bin
 
+# Lua configuration.
+LUA_DIR=$(DEPS)/lua
+PLATFORM=macosx
+
 # Luarocks configuration.
 LUAROCKS_DIR=$(DEPS)/luarocks
-LUAROCKS_PACKAGES=tlua ansicolors cliargs
+LUAROCKS_PACKAGES=tlua ansicolors lua_cliargs
 
 # Configure the compiler options here if they differ on your system.
 CC=gcc
 CCFLAGS=-Wall -o
-PLATFORM=posix
 
-# Default command.
-all: clean build
-
-# Update the build.
-update: clean build
+# Build everything from scratch.
+all: clean lua luarocks update_luarocks build
 
 lua:
-	cd deps/lua
-	make $(PLATFORM)
-	make install
+	@@cd $(LUA_DIR) && make INSTALL_TOP=$(LUA_DIR) $(PLATFORM) install
 
 # Build luarocks, the Lua package manager, into the same dependency folder.
 luarocks:
@@ -35,17 +33,29 @@ luarocks:
 
 update_luarocks:
 ifeq ($(wildcard, $(LUAROCKS_DIR)/bin/luarocks),)
-	@cd $(LUAROCKS_DIR) && ./bin/luarocks install $(LUAROCKS_PACKAGES)
+	@cd $(LUAROCKS_DIR) && ./bin/luarocks install tlua
+	@cd $(LUAROCKS_DIR) && ./bin/luarocks install ansicolors
+	@cd $(LUAROCKS_DIR) && ./bin/luarocks install lua_cliargs
 else 
 	echo "luarocks is not installed, run `make luarocks` first"
 endif
 
 build:
 	@@mkdir -p $(BUILD_DIR)
-	$(CC) $(CCFLAGS) $(BUILD_DIR)/webapp $(PREFIX)/src/webapp.c -llua
+	$(CC) $(CCFLAGS) $(BUILD_DIR)/webapp $(PREFIX)/src/webapp.c -llua -rpath=$(LUA_DIR)/lib
 
 clean:
 	@@rm -rf $(BUILD_DIR)
+	@@rm -rf $(LUA_DIR)/include
+	@@rm -rf $(LUA_DIR)/lib
+	@@rm -rf $(LUA_DIR)/man
+	@@rm -rf $(LUA_DIR)/src/liblua.a
+	@@rm -rf $(LUA_DIR)/src/lua
+	@@rm -rf $(LUA_DIR)/src/luac
+	@@rm -rf $(LUAROCKS_DIR)/bin
+	@@rm -rf $(LUAROCKS_DIR)/lib
+	@@rm -rf $(LUAROCKS_DIR)/share
+	(cd $(LUA_DIR) && make clean)
 	(cd $(LUAROCKS_DIR) && make clean)
 
 

@@ -2,17 +2,18 @@
 #include <string.h>
 #include <stdlib.h>
 
-// This prototype uses the luajit headers instead of standard Lua.
-#include "../deps/lua/install/include/lua.h"
-#include "../deps/lua/install/include/luaconf.h"
-#include "../deps/lua/install/include/lauxlib.h"
-#include "../deps/lua/install/include/lualib.h"
+// Include the Lua headers.
+#include "../deps/lua/include/lua.h"
+#include "../deps/lua/include/luaconf.h"
+#include "../deps/lua/include/lauxlib.h"
+#include "../deps/lua/include/lualib.h"
 
 // ~ Read Lua configuration file. ~
 int load_lua_cli(char** buffer) {
   FILE* file = fopen("lib/cli.lua", "rb");
   int length;
 
+  // FIXME Visual Studio complains that this is safer, is it?
   //fopen_s(&file, path, "rb");
 
   // Ensure the file exists.
