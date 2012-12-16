@@ -54,7 +54,6 @@ build: cleanbuild
 # Do a full removal of the compiled parts.  Typically you will never need to
 # run this.
 clean:
-	touch $(LUAROCKS_DIR)/config.unix
 	@@rm -rf $(BUILD_DIR)
 	@@rm -rf $(LUA_DIR)/include
 	@@rm -rf $(LUA_DIR)/lib
@@ -68,6 +67,7 @@ clean:
 	@@rm -rf $(LUAROCKS_DIR)/share
 	@@cd $(LUA_DIR) && make clean
 	@@cd $(LUAROCKS_DIR) && make clean
+	@@touch $(LUAROCKS_DIR)/config.unix
 
 # Only remove the build files.
 cleanbuild:
