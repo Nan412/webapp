@@ -142,6 +142,7 @@ int load_lua_cli(char** buffer) {
 
 // Kick off the tool!
 int main (int argc, char** argv) {
+  char currentPath = ".";
   // FIXME Weird segmentation fault when running the following code.
   //char currentPath[FILENAME_MAX];
   // Set the current path.

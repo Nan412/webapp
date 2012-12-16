@@ -9,6 +9,7 @@ BUILD_DIR=$(PREFIX)/bin
 
 # Lua configuration.
 LUA_DIR=$(DEPS)/lua
+# FIXME Defaults to macosx right now, not a good default.
 PLATFORM=macosx
 
 # Luarocks configuration.
