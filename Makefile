@@ -18,6 +18,7 @@ LUAROCKS_PACKAGES=tlua ansicolors lua_cliargs
 # Configure the compiler options here if they differ on your system.
 CC=gcc
 CCFLAGS=-Wall -o $(BUILD_DIR)/webapp
+BUILD_FLAGS=-rpath,$(LUA_DIR)/lib -Wl,-L$(LUA_DIR)/lib,-llua
 
 # Build everything from scratch.
 all: clean lua luarocks update_luarocks build
@@ -43,10 +44,13 @@ else
 	echo "luarocks is not installed, run `make luarocks` first"
 endif
 
-build:
+# Actually build the application.
+build: cleanbuild
 	@@mkdir -p $(BUILD_DIR)
-	$(CC) $(CCFLAGS) $(PREFIX)/src/webapp.c -rpath,$(LUA_DIR)/lib -Wl,-L$(LUA_DIR)/lib,-llua
+	$(CC) $(CCFLAGS) $(PREFIX)/src/webapp.c $(BUILD_FLAGS)
 
+# Do a full removal of the compiled parts.  Typically you will never need to
+# run this.
 clean:
 	@@rm -rf $(BUILD_DIR)
 	@@rm -rf $(LUA_DIR)/include
@@ -61,5 +65,23 @@ clean:
 	@@rm -rf $(LUAROCKS_DIR)/share
 	@@cd $(LUA_DIR) && make clean
 	@@cd $(LUAROCKS_DIR) && make clean
+
+# Only remove the build files.
+cleanbuild:
+	@@rm -rf $(BUILD_DIR)
+
+link:
+ifeq ($(shell whoami), root)
+	@ln -s $(BUILD_DIR)/webapp /usr/local/bin/webapp
+else
+	@@echo "You need to run this command as root, perhaps sudo."
+endif
+
+unlink:
+ifeq ($(shell whoami), root)
+	@@unlink /usr/local/bin/webapp
+else
+	@@echo "You need to run this command as root, perhaps sudo."
+endif
 
 .PHONY: bin

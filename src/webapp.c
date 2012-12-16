@@ -1,12 +1,98 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 // Include the Lua headers.
 #include "../deps/lua/include/lua.h"
 #include "../deps/lua/include/luaconf.h"
 #include "../deps/lua/include/lauxlib.h"
 #include "../deps/lua/include/lualib.h"
+
+// Awesome cross platform function to find the execution path.  Adapted from
+// Hiperion's answer in StackOverflow.
+//
+// http://stackoverflow.com/questions/606041/how-do-i-get-the-path-of-a-process
+// -in-unix-linux
+char* find_execution_path(char* path, size_t dest_len, char* argv0) {
+  char* baseName = NULL;
+  char* systemPath = NULL;
+  char* candidateDir = NULL;
+
+  // The easiest case: Linux.  If it's not here, there is no guarentee.
+  if (readlink("/proc/self/exe", path, dest_len) != -1) {
+    dirname(path);
+    strcat(path, "/");
+
+    return path;
+  }
+
+  /* check if we have something like execve("foobar", NULL, NULL) */
+  if (argv0 == NULL) {
+    /* we surrender and give current path instead */
+    if (getcwd (path, dest_len) == NULL) return NULL;
+    strcat  (path, "/");
+
+    return path;
+  }
+
+  /* argv[0] */
+  /* if dest_len < PATH_MAX may cause buffer overflow */
+  if ((realpath (argv0, path)) && (!access (path, F_OK))) {
+    dirname (path);
+    strcat  (path, "/");
+
+    return path;
+  }
+
+  /* Current path */
+  baseName = basename (argv0);
+  if (getcwd (path, dest_len - strlen (baseName) - 1) == NULL) {
+    return NULL;
+  }
+
+  strcat(path, "/");
+  strcat(path, baseName);
+
+  if (access (path, F_OK) == 0) {
+    dirname (path);
+    strcat  (path, "/");
+    return path;
+  }
+
+  /* Try the PATH. */
+  systemPath = getenv ("PATH");
+  if (systemPath != NULL) {
+    dest_len--;
+    systemPath = strdup (systemPath);
+
+    for (candidateDir = strtok (systemPath, ":"); candidateDir != NULL; candidateDir = strtok (NULL, ":")) {
+      strncpy (path, candidateDir, dest_len);
+      strncat (path, "/", dest_len);
+      strncat (path, baseName, dest_len);
+
+      if (access(path, F_OK) == 0) {
+        free (systemPath);
+        dirname (path);
+        strcat  (path, "/");
+
+        return path;
+      }
+    }
+
+    free(systemPath);
+    dest_len++;
+  }
+
+  /* again someone has use execve: we dont knowe the executable name; we surrender and give instead current path */
+  if (getcwd (path, dest_len - 1) == NULL) {
+    return NULL;
+  }
+
+  strcat(path, "/");
+
+  return path;
+}
 
 // ~ Read Lua configuration file. ~
 int load_lua_cli(char** buffer) {
@@ -56,10 +142,35 @@ int load_lua_cli(char** buffer) {
 
 // Kick off the tool!
 int main (int argc, char** argv) {
+  char* currentPath = ".";
+  // FIXME Weird segmentation fault when running the following code.
+  //char currentPath[FILENAME_MAX];
+  // Set the current path.
+  //find_execution_path(currentPath, sizeof(currentPath), argv[0]);
   // Used to store the contents of the CLI script.
   char* buff;
   // Used for iteration and tracking errors.
   int i, error;
+  // The template string for Lua module paths.
+  char* paths =
+    "%s/?.lua;%s/deps/luarocks/share/lua/5.2/?.lua;%s/deps/luarocks/share/lua/"
+    "5.2/?/init.lua;%s/deps/luarocks/lib/lua/5.2/?.lua;%s/deps/luarocks/lib/lu"
+    "a/5.2/?/init.lua";
+  // Allocate the memory to store the completed absolute paths.
+  char* absolutePaths = malloc(snprintf(NULL, 0, paths, currentPath,
+    currentPath, currentPath, currentPath, currentPath) + 1);
+  // Normalize paths to their absolute form.
+  sprintf(absolutePaths, paths, currentPath, currentPath, currentPath,
+    currentPath, currentPath);
+  // The template string for Lua module paths.
+  char* cpaths =
+    "%s/?.so;%s/deps/luarocks/lib/lua/5.2/?.so;%s/deps/luarocks/lib/lua/5.2/lo"
+    "adall.so";
+  // Allocate the memory to store the completed absolute cpaths.
+  char* absoluteCPaths = malloc(snprintf(NULL, 0, cpaths, currentPath,
+    currentPath, currentPath) + 1);
+  // Normalize cpaths to their absolute form.
+  sprintf(absoluteCPaths, cpaths, currentPath, currentPath, currentPath);
 
   // Open lua.
   lua_State* L = luaL_newstate();
@@ -77,7 +188,7 @@ int main (int argc, char** argv) {
   lua_pop(L, 1);
 
   // Push the new String onto the stack.
-  lua_pushstring(L, "./?.lua;./deps/luarocks/share/lua/5.2/?.lua;./deps/luarocks/share/lua/5.2/?/init.lua;./deps/luarocks/lib/lua/5.2/?.lua;./deps/luarocks/lib/lua/5.2/?/init.lua");
+  lua_pushstring(L, absolutePaths);
 
   // Set the field "path" in table at -2 with value at top of stack.
   lua_setfield(L, -2, "path");
@@ -89,7 +200,7 @@ int main (int argc, char** argv) {
   lua_getglobal(L, "package");
   lua_getfield(L, -1, "cpath");
   lua_pop(L, 1);
-  lua_pushstring(L, "./?.so;./deps/luarocks/lib/lua/5.2/?.so;./deps/luarocks/lib/lua/5.2/loadall.so");
+  lua_pushstring(L, absoluteCPaths);
   lua_setfield(L, -2, "cpath");
   lua_pop(L, 1);
   
