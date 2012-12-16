@@ -1,5 +1,5 @@
-#!/Users/timbranyen/git/webapp/deps/lua/bin/lua
-package.path = [[/Users/timbranyen/git/webapp/deps/luarocks/share/lua/5.2//?.lua;/Users/timbranyen/git/webapp/deps/luarocks/share/lua/5.2//?/init.lua;]]..package.path
+#!/home/tim/git/webapp/deps/lua/bin/lua
+package.path = [[/home/tim/git/webapp/deps/luarocks/share/lua/5.2//?.lua;/home/tim/git/webapp/deps/luarocks/share/lua/5.2//?/init.lua;]]..package.path
 
 local command_line = require("luarocks.command_line")
 
