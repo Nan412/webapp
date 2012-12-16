@@ -14,85 +14,85 @@
 //
 // http://stackoverflow.com/questions/606041/how-do-i-get-the-path-of-a-process
 // -in-unix-linux
-char* find_execution_path(char* path, size_t dest_len, char* argv0) {
-  char* baseName = NULL;
-  char* systemPath = NULL;
-  char* candidateDir = NULL;
-
-  // The easiest case: Linux.  If it's not here, there is no guarentee.
-  if (readlink("/proc/self/exe", path, dest_len) != -1) {
-    dirname(path);
-    strcat(path, "/");
-
-    return path;
-  }
-
-  /* check if we have something like execve("foobar", NULL, NULL) */
-  if (argv0 == NULL) {
-    /* we surrender and give current path instead */
-    if (getcwd (path, dest_len) == NULL) return NULL;
-    strcat  (path, "/");
-
-    return path;
-  }
-
-  /* argv[0] */
-  /* if dest_len < PATH_MAX may cause buffer overflow */
-  if ((realpath (argv0, path)) && (!access (path, F_OK))) {
-    dirname (path);
-    strcat  (path, "/");
-
-    return path;
-  }
-
-  /* Current path */
-  baseName = basename (argv0);
-  if (getcwd (path, dest_len - strlen (baseName) - 1) == NULL) {
-    return NULL;
-  }
-
-  strcat(path, "/");
-  strcat(path, baseName);
-
-  if (access (path, F_OK) == 0) {
-    dirname (path);
-    strcat  (path, "/");
-    return path;
-  }
-
-  /* Try the PATH. */
-  systemPath = getenv ("PATH");
-  if (systemPath != NULL) {
-    dest_len--;
-    systemPath = strdup (systemPath);
-
-    for (candidateDir = strtok (systemPath, ":"); candidateDir != NULL; candidateDir = strtok (NULL, ":")) {
-      strncpy (path, candidateDir, dest_len);
-      strncat (path, "/", dest_len);
-      strncat (path, baseName, dest_len);
-
-      if (access(path, F_OK) == 0) {
-        free (systemPath);
-        dirname (path);
-        strcat  (path, "/");
-
-        return path;
-      }
-    }
-
-    free(systemPath);
-    dest_len++;
-  }
-
-  /* again someone has use execve: we dont knowe the executable name; we surrender and give instead current path */
-  if (getcwd (path, dest_len - 1) == NULL) {
-    return NULL;
-  }
-
-  strcat(path, "/");
-
-  return path;
-}
+//char* find_execution_path(char* path, size_t dest_len, char* argv0) {
+//  char* baseName = NULL;
+//  char* systemPath = NULL;
+//  char* candidateDir = NULL;
+//
+//  // The easiest case: Linux.  If it's not here, there is no guarentee.
+//  if (readlink("/proc/self/exe", path, dest_len) != -1) {
+//    dirname(path);
+//    strcat(path, "/");
+//
+//    return path;
+//  }
+//
+//  /* check if we have something like execve("foobar", NULL, NULL) */
+//  if (argv0 == NULL) {
+//    /* we surrender and give current path instead */
+//    if (getcwd (path, dest_len) == NULL) return NULL;
+//    strcat  (path, "/");
+//
+//    return path;
+//  }
+//
+//  /* argv[0] */
+//  /* if dest_len < PATH_MAX may cause buffer overflow */
+//  if ((realpath (argv0, path)) && (!access (path, F_OK))) {
+//    dirname (path);
+//    strcat  (path, "/");
+//
+//    return path;
+//  }
+//
+//  /* Current path */
+//  baseName = basename (argv0);
+//  if (getcwd (path, dest_len - strlen (baseName) - 1) == NULL) {
+//    return NULL;
+//  }
+//
+//  strcat(path, "/");
+//  strcat(path, baseName);
+//
+//  if (access (path, F_OK) == 0) {
+//    dirname (path);
+//    strcat  (path, "/");
+//    return path;
+//  }
+//
+//  /* Try the PATH. */
+//  systemPath = getenv ("PATH");
+//  if (systemPath != NULL) {
+//    dest_len--;
+//    systemPath = strdup (systemPath);
+//
+//    for (candidateDir = strtok (systemPath, ":"); candidateDir != NULL; candidateDir = strtok (NULL, ":")) {
+//      strncpy (path, candidateDir, dest_len);
+//      strncat (path, "/", dest_len);
+//      strncat (path, baseName, dest_len);
+//
+//      if (access(path, F_OK) == 0) {
+//        free (systemPath);
+//        dirname (path);
+//        strcat  (path, "/");
+//
+//        return path;
+//      }
+//    }
+//
+//    free(systemPath);
+//    dest_len++;
+//  }
+//
+//  /* again someone has use execve: we dont knowe the executable name; we surrender and give instead current path */
+//  if (getcwd (path, dest_len - 1) == NULL) {
+//    return NULL;
+//  }
+//
+//  strcat(path, "/");
+//
+//  return path;
+//}
 
 // ~ Read Lua configuration file. ~
 int load_lua_cli(char** buffer) {
@@ -142,7 +142,7 @@ int load_lua_cli(char** buffer) {
 
 // Kick off the tool!
 int main (int argc, char** argv) {
-  char currentPath = ".";
+  char* currentPath = ".";
   // FIXME Weird segmentation fault when running the following code.
   //char currentPath[FILENAME_MAX];
   // Set the current path.
