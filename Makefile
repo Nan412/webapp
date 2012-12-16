@@ -48,7 +48,11 @@ endif
 # Actually build the application.
 build: cleanbuild
 	@@mkdir -p $(BUILD_DIR)
+ifeq ($(PLATFORM), linux)
 	$(CC) $(CC_FLAGS) $(LD_FLAGS) -o $(BUILD_DIR)/webapp $(PREFIX)/src/webapp.c $(LUA_DIR)/lib/liblua.a /lib/libm.so.6
+else
+	$(CC) $(CC_FLAGS) $(LD_FLAGS) -o $(BUILD_DIR)/webapp $(PREFIX)/src/webapp.c
+endif
 
 # Do a full removal of the compiled parts.  Typically you will never need to
 # run this.
