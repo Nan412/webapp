@@ -11,6 +11,7 @@ deps/luarocks/bin
 deps/luarocks/lib
 deps/luarocks/share
 deps/luarocks/built
+deps/luarocks/src/bin
 deps/lua/include/
 deps/lua/lib/
 deps/lua/man/

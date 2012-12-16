@@ -19,7 +19,8 @@ LUAROCKS_PACKAGES=tlua ansicolors lua_cliargs
 # Configure the compiler options here if they differ on your system.
 CC=gcc
 CC_FLAGS=-Wall
-LD_FLAGS=-Wl,-rpath,$(LUA_DIR)/lib -Wl,-L./deps/lua/lib -Wl,-llua
+LD_FLAGS=-Wl,-rpath,$(LUA_DIR)/lib
+LINUX_FLAGS=-I$(LUA_DIR)/include -L$(LUA_DIR)/lib -llua -lm -ldl -lc
 
 # Build everything from scratch.
 all: clean lua luarocks update_luarocks build
@@ -48,15 +49,12 @@ endif
 # Actually build the application.
 build: cleanbuild
 	@@mkdir -p $(BUILD_DIR)
-ifeq ($(PLATFORM), linux)
-	$(CC) $(CC_FLAGS) $(LD_FLAGS) -o $(BUILD_DIR)/webapp $(PREFIX)/src/webapp.c $(LUA_DIR)/lib/liblua.a /lib/libm.so.6
-else
-	$(CC) $(CC_FLAGS) $(LD_FLAGS) -o $(BUILD_DIR)/webapp $(PREFIX)/src/webapp.c
-endif
+	@@$(CC) $(CC_FLAGS) $(LD_FLAGS) -o $(BUILD_DIR)/webapp $(PREFIX)/src/webapp.c $(LINUX_FLAGS)
 
 # Do a full removal of the compiled parts.  Typically you will never need to
 # run this.
 clean:
+	touch $(LUAROCKS_DIR)/config.unix
 	@@rm -rf $(BUILD_DIR)
 	@@rm -rf $(LUA_DIR)/include
 	@@rm -rf $(LUA_DIR)/lib
