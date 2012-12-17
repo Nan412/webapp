@@ -11,6 +11,7 @@
 
 #if _WIN32 || _WIN64
 #include <Windows.h>
+#define snprintf _snprintf
 #endif
 
 // Awesome cross platform function to find the execution path.  Adapted from
@@ -166,7 +167,7 @@ int main (int argc, char** argv) {
     "5.2/?/init.lua;%s/deps/luarocks/lib/lua/5.2/?.lua;%s/deps/luarocks/lib/lu"
     "a/5.2/?/init.lua";
   // Allocate the memory to store the completed absolute paths.
-  absolutePaths = malloc(_snprintf(NULL, 0, paths, currentPath,
+  absolutePaths = malloc(snprintf(NULL, 0, paths, currentPath,
     currentPath, currentPath, currentPath, currentPath) + 1);
   // Normalize paths to their absolute form.
   sprintf(absolutePaths, paths, currentPath, currentPath, currentPath,
@@ -176,7 +177,7 @@ int main (int argc, char** argv) {
     "%s/?.so;%s/deps/luarocks/lib/lua/5.2/?.so;%s/deps/luarocks/lib/lua/5.2/lo"
     "adall.so";
   // Allocate the memory to store the completed absolute cpaths.
-  absoluteCPaths = malloc(_snprintf(NULL, 0, cpaths, currentPath,
+  absoluteCPaths = malloc(snprintf(NULL, 0, cpaths, currentPath,
     currentPath, currentPath) + 1);
   // Normalize cpaths to their absolute form.
   sprintf(absoluteCPaths, cpaths, currentPath, currentPath, currentPath);
