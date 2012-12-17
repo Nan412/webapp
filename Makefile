@@ -1,5 +1,8 @@
 # Copyright 2012, Tim Branyen (@tbranyen)
 # This software may be freely distributed under the MIT license.
+
+# Host OS detection, removes need for checking.
+UNAME= $(shell uname)
  
 # Configure custom paths here, ideally you will only ever need to change the
 # `PREFIX`.
@@ -9,8 +12,8 @@ BUILD_DIR=$(PREFIX)/bin
 
 # Lua configuration.
 LUA_DIR=$(DEPS)/lua
-# FIXME Defaults to macosx right now, not a good default.
-PLATFORM=macosx
+# Defaults to posix, override with custom.
+PLATFORM=posix
 
 # Luarocks configuration.
 LUAROCKS_DIR=$(DEPS)/luarocks
@@ -33,7 +36,14 @@ update_submodules:
 
 # Build a localized version of Lua.
 lua:
+ifeq "$(UNAME)" "Linux"
+	@@cd $(LUA_DIR) && make INSTALL_TOP=$(LUA_DIR) linux install
+endif
+ifeq "$(UNAME)" "Darwin"
+	@@cd $(LUA_DIR) && make INSTALL_TOP=$(LUA_DIR) macosx install
+else
 	@@cd $(LUA_DIR) && make INSTALL_TOP=$(LUA_DIR) $(PLATFORM) install
+endif
 
 # Build luarocks, the Lua package manager, into the same dependency folder.
 luarocks:
@@ -43,7 +53,7 @@ luarocks:
 
 # FIXME Should this instead go into the Lua directory or someplace else?
 luafilesystem:
-	@@$(CC) $(CC_FLAGS) $(LD_FLAGS) -shared -o $(LUAFILESYSTEM_DIR)/src/lfs.so $(LUAFILESYSTEM_DIR)/src/lfs.o $(LINUX_FLAGS)
+	@@$(CC) $(CC_FLAGS) $(LD_FLAGS) -shared -o $(LUAFILESYSTEM_DIR)/src/lfs.so $(LUAFILESYSTEM_DIR)/src/lfs.c $(LINUX_FLAGS)
 
 # FIXME Do not hardcode packages in here.
 # Update all the luarocks packages.

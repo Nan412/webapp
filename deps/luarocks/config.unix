@@ -2,18 +2,18 @@
 # Run "./configure --help" for details.
 
 LUA_VERSION=5.2
-PREFIX=/home/tim/git/webapp/deps/luarocks
-SYSCONFDIR=/home/tim/git/webapp/deps/luarocks
-ROCKS_TREE=/home/tim/git/webapp/deps/luarocks
+PREFIX=/Users/timbranyen/git/webapp/deps/luarocks
+SYSCONFDIR=/Users/timbranyen/git/webapp/deps/luarocks
+ROCKS_TREE=/Users/timbranyen/git/webapp/deps/luarocks
 LUA_SUFFIX=
-LUA_DIR=/home/tim/git/webapp/deps/lua
+LUA_DIR=/Users/timbranyen/git/webapp/deps/lua
 LUA_DIR_SET=yes
-LUA_INCDIR=/home/tim/git/webapp/deps/lua/include
-LUA_LIBDIR=/home/tim/git/webapp/deps/lua/lib
-LUA_BINDIR=/home/tim/git/webapp/deps/lua/bin
+LUA_INCDIR=/Users/timbranyen/git/webapp/deps/lua/include
+LUA_LIBDIR=/Users/timbranyen/git/webapp/deps/lua/lib
+LUA_BINDIR=/Users/timbranyen/git/webapp/deps/lua/bin
 FORCE_CONFIG=yes
-LUAROCKS_UNAME_M=i686
-LUAROCKS_UNAME_S=Linux
+LUAROCKS_UNAME_M=x86_64
+LUAROCKS_UNAME_S=Darwin
 LUAROCKS_DOWNLOADER=wget
-LUAROCKS_MD5CHECKER=md5sum
+LUAROCKS_MD5CHECKER=openssl
 
