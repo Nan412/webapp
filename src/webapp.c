@@ -33,6 +33,9 @@ char* find_execution_path(char* path, size_t dest_len, char* argv0) {
     dirname(path);
     strcat(path, "/");
 
+		// Remove the trailing folder and bin.
+		path[strlen(path)-4] = '\0';
+
     return path;
   }
 
