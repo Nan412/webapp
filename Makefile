@@ -42,6 +42,7 @@ ifeq ($(wildcard, $(LUAROCKS_DIR)/bin/luarocks),)
 	@cd $(LUAROCKS_DIR) && ./bin/luarocks install tlua
 	@cd $(LUAROCKS_DIR) && ./bin/luarocks install ansicolors
 	@cd $(LUAROCKS_DIR) && ./bin/luarocks install lua_cliargs
+	@cd $(LUAROCKS_DIR) && ./bin/luarocks install json4lua
 else 
 	echo "luarocks is not installed, run `make luarocks` first"
 endif

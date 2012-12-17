@@ -27,7 +27,6 @@ char* find_execution_path(char* path, size_t dest_len, char* argv0) {
   char* systemPath = NULL;
   char* candidateDir = NULL;
   char buf[FILENAME_MAX];
-  size_t len;
 
   // The easiest case: Linux.  If it's not here, there is no guarentee.
   if (readlink("/proc/self/exe", path, dest_len) != -1) {
@@ -96,12 +95,10 @@ char* find_execution_path(char* path, size_t dest_len, char* argv0) {
         path[strlen(path)-1] = '\0';
 
         // Attempt checking if this is a symbolic link.
-        if ((len = readlink(path, path, sizeof(buf)-1)) != -1) {
-          path[strlen(path)-10] = '\0';
+        readlink(path, path, sizeof(buf)-1);
 
-          // Symbolic link path.
-          return path;
-        }
+        // Remove the trailing folder and bin.
+        path[strlen(path)-10] = '\0';
 
         // Hard path.
         return path;
@@ -112,7 +109,8 @@ char* find_execution_path(char* path, size_t dest_len, char* argv0) {
     dest_len++;
   }
 
-  /* again someone has use execve: we dont knowe the executable name; we surrender and give instead current path */
+  /* again someone has use execve: we dont knowe the executable name; we
+   * surrender and give instead current path */
   if (getcwd (path, dest_len - 1) == NULL) {
     return NULL;
   }
