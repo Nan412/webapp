@@ -18,30 +18,13 @@
     <None Include=".gitignore" />
     <None Include="Makefile" />
     <None Include="README.md" />
+    <None Include="deps\lua\doc\contents.html" />
+    <None Include="deps\lua\doc\manual.html" />
+    <None Include="deps\lua\doc\readme.html" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\webapp.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\luajit-2.0\lauxlib.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\luajit-2.0\lua.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\luajit-2.0\lua.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\luajit-2.0\luaconf.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\luajit-2.0\luajit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\luajit-2.0\lualib.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

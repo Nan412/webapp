@@ -46,11 +46,12 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
+      <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\Program Files %28x86%29\Lua\5.1\lib;C:\Users\Tim\Documents\GitHub\webapp\include\luajit-2.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>lua5.1.lib;lua51.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -68,6 +69,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include=".gitignore" />
+    <None Include="deps\lua\doc\contents.html" />
+    <None Include="deps\lua\doc\manual.html" />
+    <None Include="deps\lua\doc\readme.html" />
     <None Include="Makefile" />
     <None Include="README.md" />
   </ItemGroup>
@@ -75,12 +79,9 @@
     <ClCompile Include="src\webapp.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\luajit-2.0\lauxlib.h" />
-    <ClInclude Include="include\luajit-2.0\lua.h" />
-    <ClInclude Include="include\luajit-2.0\lua.hpp" />
-    <ClInclude Include="include\luajit-2.0\luaconf.h" />
-    <ClInclude Include="include\luajit-2.0\luajit.h" />
-    <ClInclude Include="include\luajit-2.0\lualib.h" />
+    <ProjectReference Include="lualib.vcxproj">
+      <Project>{1278ecbb-0f4c-45c9-81df-bea477690993}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
