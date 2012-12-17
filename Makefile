@@ -29,7 +29,7 @@ LINUX_FLAGS=-I$(LUA_DIR)/include -L$(LUA_DIR)/lib -llua -lm -ldl -lc
 all: clean update_submodules lua luarocks luafilesystem update_luarocks build
 
 update_submodules:
-	git submodule update --init
+	git submodule update --init --recursive
 
 # Build a localized version of Lua.
 lua:
