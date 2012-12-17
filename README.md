@@ -11,22 +11,16 @@ Prerequisites (Unix only):
     * GCC
     * Git (for submodules and luarocks package install)
 
-MacOS X:
+MacOS X/Linux/Posix:
 
 ``` bash
 make
 ```
 
-Linux:
+Other platforms (defaults to Posix):
 
 ``` bash
-make PLATFORM=linux
-```
-
-POSIX:
-
-``` bash
-make PLATFORM=posix
+make PLATFORM=solaris
 ```
 
 ### To test: ###
