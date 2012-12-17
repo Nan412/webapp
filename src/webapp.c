@@ -244,7 +244,7 @@ int main (int argc, char** argv) {
 
   // File read error.
   if (error < 0) {
-    fprintf(stderr, "%s", "Unable read or parse the main CLI file.");
+    fprintf(stderr, "%s\n", "Unable read or parse the main CLI file.");
     return 1;
   }
 
@@ -252,7 +252,7 @@ int main (int argc, char** argv) {
   error = luaL_loadstring(L, buff);
 
   if (error) {
-    fprintf(stderr, "%s", lua_tostring(L, -1));
+    fprintf(stderr, "%s\n", lua_tostring(L, -1));
 
     // Pop error from the stack.
     lua_pop(L, 1);
@@ -276,7 +276,7 @@ int main (int argc, char** argv) {
 
   // Report all errors.
   if (error) {
-    fprintf(stderr, "%s", lua_tostring(L, -1));
+    fprintf(stderr, "%s\n", lua_tostring(L, -1));
 
     // Pop error from the stack
     lua_pop(L, 1);
