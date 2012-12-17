@@ -9,17 +9,18 @@ Prerequisites (Unix only):
 
     * GNU Make 3.81 or newer
     * GCC
+    * Git (for submodules and luarocks package install)
+
+MacOS X:
+
+``` bash
+make
+```
 
 Linux:
 
 ``` bash
 make PLATFORM=linux
-```
-
-MacOS X:
-
-``` bash
-make PLATFORM=macosx
 ```
 
 POSIX:

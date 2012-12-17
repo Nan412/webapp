@@ -84,7 +84,9 @@ char* find_execution_path(char* path, size_t dest_len, char* argv0) {
     dest_len--;
     systemPath = strdup(systemPath);
 
-    for (candidateDir = strtok(systemPath, ":"); candidateDir != NULL; candidateDir = strtok(NULL, ":")) {
+    for (candidateDir = strtok(systemPath, ":"); candidateDir != NULL;
+      candidateDir = strtok(NULL, ":")) {
+
       strncpy(path, candidateDir, dest_len);
       strncat(path, "/", dest_len);
       strncat(path, baseName, dest_len);
