@@ -2,8 +2,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <libgen.h>
 
 // Include Lua.
 #include "../deps/lua/src/lua.h"
@@ -11,10 +9,15 @@
 #include "../deps/lua/src/lauxlib.h"
 #include "../deps/lua/src/lualib.h"
 
-// Windows support.
 #if _WIN32 || _WIN64
 #include <Windows.h>
 #define snprintf _snprintf
+
+#elif __APPLE__ || __linux
+#include <unistd.h>
+#include <libgen.h>
+
+#elif __unix || __posix
 #endif
 
 // Awesome cross platform function to find the execution path.  Adapted from
@@ -57,6 +60,8 @@ char* find_execution_path(char* path, size_t dest_len, char* argv0) {
     dirname(path);
     strcat(path, "/");
 
+    // Remove the trailing folder and bin.
+    path[strlen(path)-11] = '\0';
     return path;
   }
 
@@ -243,6 +248,7 @@ int main (int argc, char** argv) {
   lua_pop(L, 1);
   
   // Open file buffer.
+  fprintf(stdout, "%s\n", currentPath);
   error = load_lua_cli(currentPath, &buff);
 
   // File read error.
