@@ -16,6 +16,9 @@ PLATFORM=macosx
 LUAROCKS_DIR=$(DEPS)/luarocks
 LUAROCKS_PACKAGES=tlua ansicolors lua_cliargs
 
+# LuaFileSystem configuration.
+LUAFILESYSTEM_DIR=$(DEPS)/luafilesystem
+
 # Configure the compiler options here if they differ on your system.
 CC=gcc
 CC_FLAGS=-Wall
@@ -23,7 +26,10 @@ LD_FLAGS=-Wl,-rpath,$(LUA_DIR)/lib
 LINUX_FLAGS=-I$(LUA_DIR)/include -L$(LUA_DIR)/lib -llua -lm -ldl -lc
 
 # Build everything from scratch.
-all: clean lua luarocks update_luarocks build
+all: clean update_submodules lua luarocks luafilesystem update_luarocks build
+
+update_submodules:
+	git submodule update --init
 
 # Build a localized version of Lua.
 lua:
@@ -35,14 +41,18 @@ luarocks:
 	@@cd $(LUAROCKS_DIR) && ./configure --prefix=$(LUAROCKS_DIR) --sysconfdir=$(LUAROCKS_DIR) --with-lua=$(LUA_DIR) --force-config
 	@@cd $(LUAROCKS_DIR) make && make install
 
+# FIXME Should this instead go into the Lua directory or someplace else?
+luafilesystem:
+	@@$(CC) $(CC_FLAGS) $(LD_FLAGS) -shared -o $(LUAFILESYSTEM_DIR)/src/lfs.so $(LUAFILESYSTEM_DIR)/src/lfs.o $(LINUX_FLAGS)
+
 # FIXME Do not hardcode packages in here.
 # Update all the luarocks packages.
 update_luarocks:
 ifeq ($(wildcard, $(LUAROCKS_DIR)/bin/luarocks),)
-	@cd $(LUAROCKS_DIR) && ./bin/luarocks install tlua
-	@cd $(LUAROCKS_DIR) && ./bin/luarocks install ansicolors
-	@cd $(LUAROCKS_DIR) && ./bin/luarocks install lua_cliargs
-	@cd $(LUAROCKS_DIR) && ./bin/luarocks install json4lua
+	@@cd $(LUAROCKS_DIR) && ./bin/luarocks install tlua
+	@@cd $(LUAROCKS_DIR) && ./bin/luarocks install ansicolors
+	@@cd $(LUAROCKS_DIR) && ./bin/luarocks install lua_cliargs
+	@@cd $(LUAROCKS_DIR) && ./bin/luarocks install json4lua
 else 
 	echo "luarocks is not installed, run `make luarocks` first"
 endif
@@ -76,7 +86,7 @@ cleanbuild:
 
 link:
 ifeq ($(shell whoami), root)
-	@ln -s $(BUILD_DIR)/webapp /usr/local/bin/webapp
+	@@ln -s $(BUILD_DIR)/webapp /usr/local/bin/webapp
 else
 	@@echo "You need to run this command as root, perhaps sudo."
 endif

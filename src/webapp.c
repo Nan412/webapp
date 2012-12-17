@@ -202,7 +202,7 @@ int main (int argc, char** argv) {
   // The template string for Lua module paths.
   cpaths =
     "%s/?.so;%s/deps/luarocks/lib/lua/5.2/?.so;%s/deps/luarocks/lib/lua/5.2/lo"
-    "adall.so";
+    "adall.so;%s/deps/luafilesystem/src/?.so";
   // Allocate the memory to store the completed absolute cpaths.
   absoluteCPaths = malloc(snprintf(NULL, 0, cpaths, currentPath,
     currentPath, currentPath) + 1);
