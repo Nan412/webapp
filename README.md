@@ -3,27 +3,31 @@ webapp
 
 a tool for building web applications
 
-### To build: ###
+## Build from source ##
 
-Prerequisites (Unix only):
+### MacOS/Linux/Unix ###
 
-    * GNU Make 3.81 or newer
-    * GCC
-    * Git (for submodules and luarocks package install)
+#### Prerequisites ####
 
-MacOS X/Linux/Posix:
+* GNU Make
+* gcc
+* Git
+
+#### MacOS / Linux ####
 
 ``` bash
 make
 ```
 
-Other platforms (defaults to Posix):
+#### Other ####
+
+*defaults to posix*
 
 ``` bash
-make PLATFORM=solaris
+make PLATFORM=other
 ```
 
-### To test: ###
+#### Test ####
 
 Run the following command to see if it works.
 
@@ -31,7 +35,7 @@ Run the following command to see if it works.
 ./bin/webapp
 ```
 
-### Link globally for development ###
+#### Link globally for development ####
 
 ``` bash
 # Symbolically link to /usr/local/bin.
