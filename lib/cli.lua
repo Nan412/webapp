@@ -16,7 +16,7 @@ function cli_error(msg, noprint)
   local msg = name .. ": " .. err .. " Run with --help for usage."
 
   if not noprint then
-    print("\n" .. msg .. "\n")
+    print(msg)
   end
 
   return nil, msg
@@ -43,5 +43,5 @@ if args["v"] then
     colors("%{yellow}Usage: webapp <task_name>")
   }
 
-  return print("\n" .. table.concat(msg, "\n") .. "\n")
+  return print(table.concat(msg, "\n"))
 end

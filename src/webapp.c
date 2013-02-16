@@ -20,16 +20,14 @@
 #elif __unix || __posix
 #endif
 
-// Awesome cross platform function to find the execution path.  Adapted from
-// Hiperion's answer in StackOverflow.
-//
 // http://stackoverflow.com/questions/606041/how-do-i-get-the-path-of-a-process
 // -in-unix-linux
-char* find_execution_path(char* path, size_t dest_len, char* argv0) {
+char* find_execution_path(char* path, char* argv0) {
   char* baseName = NULL;
   char* systemPath = NULL;
   char* candidateDir = NULL;
-  char buf[FILENAME_MAX];
+  size_t dest_len = FILENAME_MAX;
+  char buf[dest_len];
 
   // The easiest case: Linux.  If it's not here, there is no guarentee.
   if (readlink("/proc/self/exe", path, dest_len) != -1) {
@@ -61,7 +59,8 @@ char* find_execution_path(char* path, size_t dest_len, char* argv0) {
     strcat(path, "/");
 
     // Remove the trailing folder and bin.
-    path[strlen(path)-11] = '\0';
+    path[strlen(path)] = '\0';
+
     return path;
   }
 
@@ -178,7 +177,6 @@ int load_lua_cli(char* root, char** buffer) {
 
 // Kick off the tool!
 int main (int argc, char** argv) {
-  //char* currentPath = ".";
   // FIXME Weird segmentation fault when running the following code.
   char currentPath[FILENAME_MAX];
   // Used to store the contents of the CLI script.
@@ -191,7 +189,7 @@ int main (int argc, char** argv) {
   lua_State* L;
 
   // Set the current path.
-  find_execution_path(currentPath, sizeof(currentPath), argv[0]);
+  find_execution_path(currentPath, argv[0]);
 
   // The template string for Lua module paths.
   paths =
@@ -248,12 +246,12 @@ int main (int argc, char** argv) {
   lua_pop(L, 1);
   
   // Open file buffer.
-  fprintf(stdout, "%s\n", currentPath);
   error = load_lua_cli(currentPath, &buff);
 
   // File read error.
   if (error < 0) {
     fprintf(stderr, "%s\n", "Unable read or parse the main CLI file.");
+    fprintf(stderr, "%s\n", currentPath);
     return 1;
   }
 

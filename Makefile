@@ -59,10 +59,10 @@ luafilesystem:
 # Update all the luarocks packages.
 update_luarocks:
 ifeq ($(wildcard, $(LUAROCKS_DIR)/bin/luarocks),)
-	@@cd $(LUAROCKS_DIR) && ./bin/luarocks install tlua
-	@@cd $(LUAROCKS_DIR) && ./bin/luarocks install ansicolors
-	@@cd $(LUAROCKS_DIR) && ./bin/luarocks install lua_cliargs
-	@@cd $(LUAROCKS_DIR) && ./bin/luarocks install json4lua
+	$(LUAROCKS_DIR)/bin/luarocks install tlua
+	$(LUAROCKS_DIR)/bin/luarocks install ansicolors
+	$(LUAROCKS_DIR)/bin/luarocks install lua_cliargs
+	$(LUAROCKS_DIR)/bin/luarocks install json4lua
 else 
 	echo "luarocks is not installed, run `make luarocks` first"
 endif
@@ -86,6 +86,7 @@ clean:
 	@@rm -rf $(LUAROCKS_DIR)/built
 	@@rm -rf $(LUAROCKS_DIR)/lib
 	@@rm -rf $(LUAROCKS_DIR)/share
+	@@rm -rf $(LUAROCKS_DIR)/config.lua
 	@@cd $(LUA_DIR) && make clean
 	@@cd $(LUAROCKS_DIR) && make clean
 	@@touch $(LUAROCKS_DIR)/config.unix
