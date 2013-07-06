@@ -53,7 +53,7 @@ luarocks:
 
 # FIXME Should this instead go into the Lua directory or someplace else?
 luafilesystem:
-	@@$(CC) $(CC_FLAGS) $(LD_FLAGS) -shared -o $(LUAFILESYSTEM_DIR)/src/lfs.so $(LUAFILESYSTEM_DIR)/src/lfs.c $(LINUX_FLAGS)
+	@@cd $(LUAFILESYSTEM_DIR) && make
 
 # FIXME Do not hardcode packages in here.
 # Update all the luarocks packages.
