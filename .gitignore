@@ -1,3 +1,4 @@
+.moonbox/
 build/
 bin/
 Debug/
@@ -7,10 +8,6 @@ Release/
 *.sdf
 *.opensdf
 *.o
-deps/luarocks/bin
-deps/luarocks/lib
-deps/luarocks/share
-deps/luarocks/built
 deps/lua/include/
 deps/lua/lib/
 deps/lua/man/

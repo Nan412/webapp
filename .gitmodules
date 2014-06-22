@@ -1,3 +1,6 @@
+[submodule "deps/moonbox"]
+	path = deps/moonbox
+	url = https://github.com/kernelp4nic/moonbox
 [submodule "deps/luafilesystem"]
 	path = deps/luafilesystem
 	url = git@github.com:keplerproject/luafilesystem.git

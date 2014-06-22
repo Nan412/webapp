@@ -183,8 +183,8 @@ int main (int argc, char** argv) {
   char* buff;
   // Used for iteration and tracking errors.
   int i, error;
-  // Used for storing paths that are convenience for the Lua being written.
-  char *paths, *absolutePaths, *cpaths, *absoluteCPaths;
+  // Used for storing paths as a convenience for the Lua being executed.
+  char *paths;
   // Maintain the Lua runtime state.
   lua_State* L;
 
@@ -193,24 +193,17 @@ int main (int argc, char** argv) {
 
   // The template string for Lua module paths.
   paths =
-    "%s/?.lua;%s/deps/luarocks/share/lua/5.2/?.lua;%s/deps/luarocks/share/lua/"
-    "5.2/?/init.lua;%s/deps/luarocks/lib/lua/5.2/?.lua;%s/deps/luarocks/lib/lu"
-    "a/5.2/?/init.lua";
-  // Allocate the memory to store the completed absolute paths.
-  absolutePaths = malloc(snprintf(NULL, 0, paths, currentPath,
-    currentPath, currentPath, currentPath, currentPath) + 1);
-  // Normalize paths to their absolute form.
-  sprintf(absolutePaths, paths, currentPath, currentPath, currentPath,
-    currentPath, currentPath);
-  // The template string for Lua module paths.
-  cpaths =
-    "%s/?.so;%s/deps/luarocks/lib/lua/5.2/?.so;%s/deps/luarocks/lib/lua/5.2/lo"
-    "adall.so;%s/deps/luafilesystem/src/?.so";
-  // Allocate the memory to store the completed absolute cpaths.
-  absoluteCPaths = malloc(snprintf(NULL, 0, cpaths, currentPath,
-    currentPath, currentPath) + 1);
-  // Normalize cpaths to their absolute form.
-  sprintf(absoluteCPaths, cpaths, currentPath, currentPath, currentPath);
+    "./?.so;"
+    "./.moonbox/lib/lua/5.2/?.so;"
+    "./?.lua;"
+    "./.moonbox/share/lua/5.2/?/init.lua;"
+    "./.moonbox/share/lua/5.2/?.lua";
+
+  fprintf(stdout, "%s\n", paths);
+
+  // Test this out.
+  setenv("LUA_PATH", paths, 1);
+  setenv("LUA_CPATH", paths, 1);
 
   // Open lua.
   L = luaL_newstate();
@@ -218,33 +211,6 @@ int main (int argc, char** argv) {
   // Open lua libraries.
   luaL_openlibs(L);
 
-  // Get the package table.
-  lua_getglobal(L, "package");
-
-  // This gets the `path` property from the package table.  At the top of the 
-  // stack, (-1).
-  lua_getfield(L, -1, "path");
-
-  // Remove the String from the stack.
-  lua_pop(L, 1);
-
-  // Push the new String onto the stack.
-  lua_pushstring(L, absolutePaths);
-
-  // Set the field "path" in table at -2 with value at top of stack.
-  lua_setfield(L, -2, "path");
-
-  // Remove the path.
-  lua_pop(L, 1);
-
-  // Add the cpath.
-  lua_getglobal(L, "package");
-  lua_getfield(L, -1, "cpath");
-  lua_pop(L, 1);
-  lua_pushstring(L, absoluteCPaths);
-  lua_setfield(L, -2, "cpath");
-  lua_pop(L, 1);
-  
   // Open file buffer.
   error = load_lua_cli(currentPath, &buff);
 
